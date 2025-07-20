@@ -261,7 +261,205 @@ public static void sort_colors()
 //        }
         
     }
+    public static int longest_cons_seq()
+    {
+        int [] v = {0,3,7,2,5,8,4,6,0,1};
+        Arrays.sort(v);
+        int ans = 1;
+        int res = 1;
+        for(int i = 1;i<v.length;i++)
+        {
+            if(v[i] == v[i-1] + 1)
+            {
+                ans += 1;
+            }
+            else if (v[i] != v[i-1])
+            {
+                ans = 1;
+            }
+            res = Math.max(res,ans);
+        }
+        return res;
+    }
+    public static void daily_temp()
+    {                 //0,1, 2, 3, 4, 5, 6, 7
+        int [] temp = {73,74,75,71,69,72,76,73};
+        Stack<Integer>st = new Stack<>();
+        int [] ans = new int[temp.length];
+        Arrays.fill(ans,0);
+        for(int i = temp.length-1;i>=0;i--)
+        {
+            while(!st.isEmpty() && temp[st.peek()] <= temp[i])
+                st.pop();
+            if(!st.isEmpty())
+                ans[i] = st.peek() - i;
+            st.add(i);
+        }
+        System.out.println(Arrays.toString(ans));
+    }
+    public static boolean valid_p()
+    {
+        String s = "({[]})";
+        Stack<Character> st = new Stack<>();
+
+        for(Character ch: s.toCharArray() )
+        {
+            if (ch == '(' || ch == '{' || ch == '[') {
+                st.push(ch);
+            }
+            else {
+                if(ch == ')' && !st.isEmpty())
+                {
+                    Character top = st.pop();
+                    if(top != '(')
+                        return false;
+                }
+                else if (ch == '}' && !st.isEmpty())
+                {
+                    Character top = st.pop();
+                    if(top != '{')
+                        return false;
+                }
+                else if (ch == ']' && !st.isEmpty())
+                {
+                    Character top = st.pop();
+                    if(top != '[')
+                        return false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        return st.isEmpty();
+    }
+    public static void rain()
+    {
+//        int [] height = {4,2,0,3,2,5};
+//        int [] left = new int[height.length];
+//        int [] right = new int[height.length];
+//        left[0] = height[0];
+//        right[height.length-1] = height[height.length-1];
+//        for(int i =1;i<height.length;i++)
+//        {
+//            left[i] = Math.max(left[i-1],height[i]);
+//        }
+//        for(int i = height.length-2;i>=0;i--)
+//        {
+//            right[i] = Math.max(right[i+1],height[i]);
+//        }
+//        System.out.println("Left: " + Arrays.toString(left));
+//        System.out.println("Right: " + Arrays.toString(right));
+//        int ans = 0;
+//        for(int i = 0;i<height.length;i++)
+//        {
+//            ans += Math.min(left[i],right[i]) - height[i];
+//        }
+//        System.out.println("Total water trapped: " + ans);
+    }
+    public static void move_zeros()
+    {
+        int [] v = {0,1,0,3,0,2,12};
+        //          12,1,0,3,0,2,0
+        int left = 0,right = v.length-1;
+        for(int i =0 ;i<v.length;i++)
+        {
+            if(v[i] != 0)
+            {
+
+                swap(v,left,i);
+                left+=1;
+            }
+        }
+        view_list(v);
+
+        }
+        public static void reverse_array(int[] v)
+        {
+            int left= 0,right =v.length-1;
+            while(left<right)
+            {
+                int temp = v[left];
+                v[left] = v[right];
+                v[right] = temp;
+                left+=1;
+                right-=1;
+            }
+        }
+        public static void rotate_image()
+        {
+            int [][] matrix = {
+                    {1,2,3},
+                    {4,5,6},
+                    {7,8,9}
+            };
+            for(int i =0;i<matrix.length;i++)
+            {
+                for(int j = i+1;j<matrix[0].length;j++)
+                {
+                    int temp = matrix[i][j];
+                    matrix[i][j] = matrix[j][i];
+                    matrix[j][i] =temp;
+                }
+            }
+            for(int i =0 ;i<matrix.length;i++)
+            {
+                reverse_array(matrix[i]);
+            }
+            System.out.println(Arrays.deepToString(matrix));
+        }
+        public static void set_zero() {
+            int[][] matrix = {
+                    {1, 1, 1, 1},
+                    {1, 0, 1, 1},
+                    {1, 1, 1, 1}
+            };
+            int[] row = new int[matrix.length];
+            int[] col = new int[matrix[0].length];
+            for (int i = 0; i < matrix.length; i++) {
+                for (int j = 0; j < matrix[0].length; j++) {
+                    if (matrix[i][j] == 0) {
+                        row[i] = 1;
+                        col[j] = 1;
+                    }
+                }
+            }
+            for (int i = 0; i < matrix.length; i++) {
+                for (int j = 0; j < matrix[0].length; j++) {
+                    if(row[i] == 1 || col[j] == 1)
+                    {
+                        matrix[i][j] = 0;
+                    }
+                }
+
+            }
+        }
+        public static void house_r()
+        {
+            int [] v = {2,7,9,3,1};
+            int [] dp = new int[v.length];
+            dp[0] = v[0];
+            dp[1] = Math.max(v[0],v[1]);
+            for(int i =2;i<v.length;i++)
+            {
+                dp[i] = Math.max(dp[i-1],v[i] + dp[i-2]);
+            }
+
+        }
+        public static void stairs()
+        {
+            int n = 3;
+            int [] dp = new int[n];
+            dp[0] =1;
+            dp[1] = 2;
+            for(int i =2 ;i<n;i++)
+            {
+                dp[i] = dp[i-1] + dp[i-2];
+            }
+            System.out.println(dp[n-1]);
+        }
     public static void main(String[] args) {
-    group_ana();
+        stairs();
     }
 }
