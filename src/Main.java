@@ -1,6 +1,4 @@
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 public class Main {
     public static void swap(int[] nums, int i, int j) {
@@ -334,29 +332,32 @@ public static void sort_colors()
         }
         return st.isEmpty();
     }
-    public static void rain()
+    public static void trapping_rain_water()
     {
-//        int [] height = {4,2,0,3,2,5};
-//        int [] left = new int[height.length];
-//        int [] right = new int[height.length];
-//        left[0] = height[0];
-//        right[height.length-1] = height[height.length-1];
-//        for(int i =1;i<height.length;i++)
-//        {
-//            left[i] = Math.max(left[i-1],height[i]);
-//        }
-//        for(int i = height.length-2;i>=0;i--)
-//        {
-//            right[i] = Math.max(right[i+1],height[i]);
-//        }
-//        System.out.println("Left: " + Arrays.toString(left));
-//        System.out.println("Right: " + Arrays.toString(right));
-//        int ans = 0;
-//        for(int i = 0;i<height.length;i++)
-//        {
-//            ans += Math.min(left[i],right[i]) - height[i];
-//        }
-//        System.out.println("Total water trapped: " + ans);
+        int [] height = {4,2,0,3,2,5};
+        int [] left = new int[height.length];
+        int [] right = new int[height.length];
+        left[0] = height[0];
+        right[height.length-1] = height[height.length-1];
+        for(int i=1;i<height.length;i++)
+        {
+            left[i] = Math.max(left[i-1],height[i]);
+        }
+        for(int i = height.length -2 ;i>=0;i--)
+        {
+            right[i] = Math.max(right[i+1],height[i]);
+        }
+        int total_water = 0 ;
+        for(int i =1;i<height.length-1;i++)
+        {
+            int mini = Math.min(left[i],right[i]);
+            if(mini > height[i])
+            {
+                total_water = total_water + mini - height[i];
+            }
+
+        }
+        System.out.println("Total water trapped: " + total_water);
     }
     public static void move_zeros()
     {
@@ -459,7 +460,258 @@ public static void sort_colors()
             }
             System.out.println(dp[n-1]);
         }
+        public static boolean jump_game()
+        {
+            int [] v ={2,3,1,1,4};
+            int max_reach = 0;
+            for(int i =0 ;i<v.length;i++)
+            {
+                if(i>max_reach)
+                {
+                    return false;
+                }
+                max_reach = Math.max(i+v[i],max_reach);
+            }
+            return true;
+        }
+        public static void stock1()
+        {
+            int [] prices = {7,6,4,3,1};
+            int profit = 0;
+            int current_min = prices[0];
+            for(int i  =1; i<prices.length;i++)
+            {
+                if(prices[i] < current_min)
+                {
+                    current_min = prices[i];
+                }
+                else{
+                    profit = Math.max(profit, prices[i] - current_min);
+                }
+            }
+            System.out.println("Max profit: " + profit);
+        }
+        public static void lis()
+        {
+            int [] v = {10,9,2,5,3,7,101,18};
+            int [] dp = new int [v.length];
+            Arrays.fill(dp,1);
+            dp[0] = 1;
+            int max = 1;
+            for(int i =1;i<v.length;i++)
+            {
+                for(int j =0;j<i;j++)
+                {
+                    if(v[i]>v[j])
+                    {
+                        dp[i] = Math.max(1+dp[j],dp[i]);
+                    }
+                    max = Math.max(max,dp[i]);
+                }
+            }
+
+        }
+        public static int unique_p()
+        {
+            int m =3,n=7;
+            int[][] dp = new int[m][n];
+            Arrays.fill(dp[0],1);
+            for(int i = 1; i < m; i++) {
+                dp[i][0] = 1;
+            }
+            for(int i = 1;i<m;i++)
+            {
+                for(int j =1;j<n;j++)
+                {
+                    dp[i][j] = dp[i-1][j] + dp[i][j-1];
+                }
+            }
+            return dp[m][n];
+        }
+        public static boolean binary_search(int [] v,int target)
+        {
+            int left = 0, right = v.length-1;
+            while(left<=right)
+            {
+                int mid = left + (right - left) / 2;
+                if(v[mid] == target)
+                {
+                    return true;
+                }
+                else if(v[mid] > target)
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    left = mid + 1;
+                }
+            }
+            return false;
+        }
+        public static boolean search()
+        {
+            int target = 5;
+            int [][] matrix = {{1,3,5,7},
+                               {10,11,16,20},
+                               {23,30,34,60}};
+            int rows = matrix.length;
+            int cols = matrix[0].length;
+            for(int j = 0; j<rows; j++)
+            {
+                if(matrix[j][cols-1] >= target)
+                {
+                    System.out.println("called");
+                    return binary_search(matrix[j],target);
+                }
+            }
+                return false;
+        }
+        public static void length_of_longest_sub()
+        {
+            String s = "abcnsdbcbb";
+            int left = 0;
+            int max_length = 0;
+            Set<Character> set = new HashSet<>();
+            for(int i = 0; i<s.length();i++)
+            {
+                if(set.contains(s.charAt(i)))
+                {
+                    while(set.contains(s.charAt(i)))
+                    {
+                        set.remove(s.charAt(left));
+                        left+=1;
+
+                    }
+                }
+                max_length = Math.max(max_length, i - left + 1);
+                set.add(s.charAt(i));
+            }
+            System.out.println("Length of longest substring without repeating characters: " + max_length);
+        }
+        public static int [] sliding_win_max()
+        {
+            int [] v = {1,3,-1,-3,5,3,6,7};
+            int k =3;
+            int left = 0,right = 0;
+            int [] ans = new int[v.length - k + 1];
+            PriorityQueue<Integer> q = new PriorityQueue<>(Collections.reverseOrder());
+            while(right<v.length)
+            {
+                q.add(v[right]);
+                if(right - left + 1 == k)
+                {
+                    ans[left] = q.peek();
+                    q.remove(v[left]);
+                    left+=1;
+                }
+                right+=1;
+            }
+            System.out.println(Arrays.toString(ans));
+            return ans;
+        }
+        public static void num_of_island_helper(int [][] grid, int i, int j)
+        {
+            if(i<0 || i>= grid.length || j< 0 || j>= grid[0].length || grid[i][j] != 1)
+            {
+                return ;
+            }
+            grid[i][j] = 4;
+            num_of_island_helper(grid,i+1,j);
+            num_of_island_helper(grid,i-1,j);
+            num_of_island_helper(grid,i,j+1);
+            num_of_island_helper(grid,i,j-1);
+
+
+        }
+        public static void num_of_island()
+        {
+            int [][] grid = {
+                    {1,1,0,0,0},
+                    {1,1,0,1,1},
+                    {0,0,0,1,0},
+                    {0,1,1,0,0},
+                    {1,0,0,0,1}
+            };
+            int count = 0;
+
+            for(int i = 0;i<grid[0].length;i++)
+            {
+                for(int j = 0;j<grid.length;j++)
+                {
+                    if(grid[i][j] == 1)
+                    {
+                        num_of_island_helper(grid,i,j);
+                        count+=1;
+                    }
+                }
+            }
+
+            System.out.println("Number of islands: " + count);
+        }
+        public static void most_water()
+        {
+            int [] height = {1,8,6,2,5,4,8,3,7};
+            int left =0 , right = height.length-1;
+            int ans =0 ;
+
+            while(left<right)
+            {
+                int length = right-left;
+                int breadth = Math.min(height[left],height[right]);
+                ans = Math.max(ans, length * breadth);
+                if(height[left] < height[right])
+                {
+                    left+=1;
+                }
+                else
+                {
+                    right-=1;
+                }
+            }
+            System.out.println("Maximum area of water that can be contained: " + ans);
+        }
+        public static void sub_sum_k()
+        {
+            int [] v = {1,2,3};
+            int k = 3;
+            Map<Integer,Integer> m = new HashMap<>();
+            int count = 0;
+            int current_sum = 0;
+            for(int i = 0;i<v.length;i++)
+            {
+                current_sum += v[i];
+                if(current_sum == k)
+                {
+                    count+=1;
+                }
+                if(m.containsKey(current_sum - k))
+                {
+                    count += m.get(current_sum - k);
+                }
+                m.put(current_sum, m.getOrDefault(current_sum, 0) + 1);
+            }
+            System.out.println("Number of subarrays with sum equal to " + k + ": " + count);
+        }
+        public static void subsets_helper(int [] v, int start, List<Integer> path, List<List<Integer>> ans)
+        {
+            ans.add(new ArrayList<>(path));
+            for(int i = start;i<v.length;i++)
+            {
+                path.add(v[i]);
+                subsets_helper(v,i+1,path,ans);
+                path.remove(path.size()-1);
+            }
+        }
+        public static List<List<Integer>> subsets()
+        {
+            int [] v = {1,2,3};
+            List<List<Integer>> ans = new ArrayList<>();
+            List<Integer> path = new ArrayList<>();
+            subsets_helper(v,0,path,ans);
+            return ans;
+        }
     public static void main(String[] args) {
-        stairs();
+        subsets();
     }
 }
