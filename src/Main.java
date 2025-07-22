@@ -792,6 +792,7 @@ public class Main {
            {
                rmax=1;
            }
+
            lmax = lmax * v[i];
            rmax = rmax * v[n-i-1];
             ans = Math.max(ans, Math.max(lmax, rmax));
