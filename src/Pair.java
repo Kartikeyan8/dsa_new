@@ -1,9 +1,14 @@
-public class Pair {
-    int x;
-    int y;
-    public Pair(int x,int y)
-    {
-        this.x = x;
-        this.y = y;
+public class Pair<A, B> {
+    public final A first;
+    public final B second;
+
+    public Pair(A first, B second) {
+        this.first = first;
+        this.second = second;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + first + ", " + second + ")";
     }
 }

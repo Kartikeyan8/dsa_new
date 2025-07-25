@@ -1,4 +1,4 @@
-import org.w3c.dom.ls.LSOutput;
+import com.sun.source.tree.Tree;
 
 import java.util.*;
 
@@ -640,45 +640,58 @@ public class Main {
                 {1, 1, 0},
                 {0, 1, 1}
         };
+
         int n = grid.length;
         int m = grid[0].length;
-        int[][] directions
-                = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+
+        int[][] directions = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+
         int rot = 0;
-        Queue<Pair> q = new LinkedList<>();
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
+        Queue<Pair<Integer, Integer>> q = new LinkedList<>();
+
+        // Count fresh oranges and collect rotten ones
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
                 if (grid[i][j] == 1) {
                     rot++;
                 }
                 if (grid[i][j] == 2) {
-                    q.add(new Pair(i, j));
+                    q.add(new Pair<>(i, j));  // ✅ Use generics here
                 }
             }
         }
+
         int elapsed_time = 0;
         int count = 0;
+
         while (!q.isEmpty()) {
             int size_of_rotten_oranges = q.size();
+
             for (int i = 0; i < size_of_rotten_oranges; i++) {
-                assert q.peek() != null;
-                Pair current = q.poll();
-                int dx = current.x;
-                int dy = current.y;
-                for (int j = 0; j < directions.length; j++) {
-                    int new_x = dx + directions[j][0];
-                    int new_y = dy + directions[j][1];
+                Pair<Integer, Integer> current = q.poll();
+                int dx = current.first;
+                int dy = current.second;
+
+                for (int[] dir : directions) {
+                    int new_x = dx + dir[0];
+                    int new_y = dy + dir[1];
+
                     if (isFreshOrange(new_x, new_y, grid)) {
                         grid[new_x][new_y] = 2;
-                        q.add(new Pair(new_x, new_y));
-                        count += 1;
+                        q.add(new Pair<>(new_x, new_y));
+                        count++;
                     }
                 }
             }
-            elapsed_time += 1;
+
+            if (!q.isEmpty()) {
+                elapsed_time++;
+            }
         }
-        return rot != count ? -1 : elapsed_time - 1;
+
+        return rot != count ? -1 : elapsed_time;
     }
+
 
     public static boolean word_search_helper(char[][] board, String word, int index, int i, int j) {
         if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j] != word.charAt(index)) {
@@ -799,7 +812,371 @@ public class Main {
         }
         System.out.println("Maximum product subarray is: " + ans);
     }
+    public static class TreeNode{
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+            left = null;
+            right = null;
+        }
+
+    }
+    public static void inorder(TreeNode root,List<Integer>ans)
+    {
+        if(root == null)
+        {
+            return ;
+        }
+        inorder(root.left,ans);
+        ans.add(root.val);
+        inorder(root.right,ans);
+    }
+    public static boolean symmetric_helper(TreeNode p,TreeNode q)
+    {
+        if(p == null && q == null)
+        {
+            return true;
+        }
+        if(p == null || q == null)
+        {
+            return false;
+        }
+        if(p.val != q.val)
+        {
+            return false;
+        }
+        return symmetric_helper(p.left,q.right) && symmetric_helper(p.right,q.left);
+    }
+    public static boolean symmetric(TreeNode root)
+    {
+        if(root == null)
+        {
+            return true;
+        }
+
+        return symmetric_helper(root.left,root.right);
+    }
+    public static List<List<Integer>> level_order(TreeNode root)
+    {
+        if(root == null)
+        {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> ans = new ArrayList<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        while(!q.isEmpty())
+        {
+            int size = q.size();
+            TreeNode current = q.peek();
+            List<Integer> level = new ArrayList<>();
+            while(size-- > 0)
+            {
+                current = q.poll();
+                assert current != null;
+                level.add(current.val);
+                if(current.left != null)
+                {
+                    q.add(current.left);
+                }
+                if(current.right != null)
+                {
+                    q.add(current.right);
+                }
+
+            }
+            ans.add(level);
+
+        }
+        return ans;
+    }
+    public static int height(TreeNode root)
+    {
+        if(root == null)
+        {
+            return 0;
+        }
+        return 1 + Math.max(height(root.left), height(root.right));
+
+    }
+    public static List<Integer> right_side_view(TreeNode root)
+    {
+        if(root == null)
+        {
+            return new ArrayList<>();
+        }
+        int current_level = -1;
+        Queue<Pair<TreeNode,Integer>> q = new LinkedList<>();
+        List<Integer> ans = new ArrayList<>();
+        q.add(new Pair<>(root,0));
+        while(!q.isEmpty())
+        {
+
+            Pair<TreeNode,Integer> current = q.poll();
+
+            if(current_level < current.second)
+            {
+                ans.add(current.first.val);
+                current_level = current.second;
+            }
+
+            if(current.first.right != null)
+            {
+                q.add(new Pair<>(current.first.right,current.second + 1));
+            }
+            if(current.first.left != null)
+            {
+                q.add(new Pair<>(current.first.left,current.second + 1));
+            }
+        }
+        System.out.println(ans);
+        return ans;
+    }
+    public static int diameter(TreeNode root)
+    {
+        if(root == null)
+        {
+            return 0;
+        }
+        int left_height = height(root.left);
+        int right_height = height(root.right);
+        return Math.max(left_height+right_height,Math.max(diameter(root.left),diameter(root.right)));
+    }
+public static boolean validate_binary_search_tree_helper(TreeNode root,long left_bound,long right_bound)
+{
+    if(root == null)
+        return true;
+    if(root.val <= left_bound || root.val >= right_bound)
+        return false;
+    return validate_binary_search_tree_helper(root.left,left_bound,root.val) && validate_binary_search_tree_helper(root.right,root.val,right_bound);
+}
+public static boolean validate_binary_search_tree(TreeNode root)
+{
+    if(root == null)
+        return true;
+    if(root.left == null && root.right == null)
+        return true;
+    return validate_binary_search_tree_helper(root.left,Long.MIN_VALUE, Long.MAX_VALUE) ;
+
+}
+public static TreeNode invert_tree(TreeNode root)
+{
+    if(root == null)
+    {
+        return null;
+    }
+
+    TreeNode newnode = new TreeNode(root.val);
+    TreeNode nnode = newnode;
+    newnode.left = invert_tree(root.right);
+    newnode.right = invert_tree(root.left);
+    return nnode;
+}
+    public static void TreeNode_helper()
+    {
+        TreeNode root = new TreeNode(3);
+        root.left = new TreeNode(9);
+        root.right = new TreeNode(20);
+        root.right.left = new TreeNode(15);
+        root.right.right = new TreeNode(7);
+        System.out.println(invert_tree(root));
+    }
+    public static int [][] merge_intervals()
+    {
+        int [][] intervals = {{1,4},{2,6},{8,10},{15,18}};
+        Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
+        List<int[]> merged = new ArrayList<>();
+        int [] prev = intervals[0];
+        for(int i =1 ; i<intervals.length;i++)
+        {
+            if(intervals[i][0] < prev[1])
+            {
+                prev[1] = Math.max(prev[1],intervals[i][1]);
+            }
+            else{
+                merged.add(prev);
+                prev = intervals[i];
+            }
+
+        }
+        merged.add(prev);
+        return merged.toArray(new int[merged.size()][]);
+    }
+    public static void koko_eating_banana()
+    {
+        int [] piles = {3,6,7,11};
+        int h = 8;
+        int total_bananas = (Arrays.stream(piles).sum());
+        int left = 1, right = total_bananas;
+        while(left < right) {
+            int mid = left + (right - left) / 2;
+            int hours_needed = 0;
+            for(int i = 0 ;i<piles.length;i++)
+            {
+                System.out.println();
+                hours_needed = (int) (hours_needed + Math.ceil((piles[i] * 1.0) / mid)); // Using Math.ceil to round up the division
+//                hours_needed += (piles[i] + mid - 1) / mid; // Equivalent to Math.ceil(piles[i] / mid)
+            }
+            if (hours_needed <= h) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        System.out.println("Minimum eating speed: " + left);
+    }
+    public static void first_and_last_pos()
+    {
+        int target = 8 ;
+
+        int [] v = {8,8,8,8,8,8,8,8,8,8,9};
+        int left = 0, right = v.length;
+        int [] ans = {-1,-1};
+        while(left < right)
+        {
+            int mid = left+(right-left)/2;
+            if(v[mid] == target)
+            {
+                int x = mid;
+                while(mid>0 && v[mid-1] == target)
+                {
+                    mid -= 1;
+                }
+                while(x<v.length && v[x] == target)
+                {
+                    x += 1;
+                }
+                ans[0] = mid;
+                ans[1] = x-1 ;
+                break;
+            }
+            else if (v[mid] <= target)
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                right = mid - 1;
+            }
+        }
+        System.out.println("First and last position of target " + target + " are: " + Arrays.toString(ans));
+    }
+    public static void jump_game2()
+    {
+        int [] v = {2,3,1,1,4};
+        int max_reach = 0 ;
+        int cur_reach = 0 ;
+        int n = v.length;
+        int jump = 0;
+        for(int i =0 ;i<v.length;i++)
+        {
+            if(cur_reach < i)
+            {
+                jump+=1;
+                cur_reach = max_reach;
+            }
+            max_reach = Math.max(max_reach,i+v[i]);
+        }
+        System.out.println("Minimum number of jumps to reach the end: " + jump);
+    }
+    public static int coin_change_helper(int[] coins, int target, int n) {
+       if(target == 0)
+        {
+            return 0;
+        }
+         if(n == 0 || target < 0)
+          {
+                return Integer.MAX_VALUE;
+          }
+        int include = coin_change_helper(coins, target - coins[n - 1], n);
+        int exclude = coin_change_helper(coins, target, n - 1);
+        if(include != Integer.MAX_VALUE)
+        {
+            include += 1;
+        }
+        return Math.min(include, exclude);
+
+
+    }
+    public static int coin_change() {
+        int[] coins = {1, 2, 5};
+        int target = 11;
+        int [] dp = new int [target+1];
+
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        for(int i = 1;i <target+1;i++)
+        {
+            for(int j =0 ;j<coins.length;j++)
+            {
+                if(i-coins[j]>=0 && dp[i - coins[j]] != Integer.MAX_VALUE)
+                {
+                    dp[i]= Math.min(1 + dp[i-coins[j]],dp[i]);
+                }
+            }
+
+        }
+        return dp[target+1];
+//        System.out.println("Coin change dp: " + Arrays.toString(dp));
+
+//        int coin = coin_change_helper(coins,target,coins.length);
+//        System.out.println("Minimum number of coins needed to make " + target + " is: " + coin);
+    }
+    public static void perfect_square() {
+        int n = 13;
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j * j <= i; j++) {
+                dp[i] = Math.min(dp[i], dp[i - j * j] + 1);
+            }
+        }
+
+        System.out.println("DP Table: " + Arrays.toString(dp));
+        System.out.println("Minimum number of perfect squares that sum to " + n + " is: " + dp[n]);
+    }
+    public static int search_insert_pos()
+    {
+        int [] v = {1,3,5,6};
+        int target = 2;
+        int left = 0, right = v.length - 1;
+        while(left <= right)
+        {
+            if(left== right)
+            {
+               if(target>v[left])
+               {
+                   return left+1;
+               }
+               else{
+                   return left;
+               }
+            }
+            int mid = left + (right - left) / 2;
+            if(v[mid] == target)
+            {
+                return mid;
+            }
+            else if(v[mid] < target)
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                right = mid - 1;
+            }
+        }
+        return left;
+    }
     public static void main(String[] args) {
-        max_prod_sub();
+        search_insert_pos();
+
+
     }
 }
+
