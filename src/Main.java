@@ -1173,8 +1173,178 @@ public static TreeNode invert_tree(TreeNode root)
         }
         return left;
     }
+    public static int longest_common_subseq_helper(String s,String t,int m,int n,int [][]dp)
+    {
+        if(m<=0 || n<=0)
+        {
+            return 0;
+        }
+        if(dp[m][n] != -1)
+        {
+            return dp[m][n];
+        }
+        if(s.charAt(m-1) == t.charAt(n-1))
+        {
+            return dp[m][n] = 1 + longest_common_subseq_helper(s,t,m-1,n-1,dp);
+        }
+        return dp[m][n] = Math.max(longest_common_subseq_helper(s,t,m-1,n,dp),longest_common_subseq_helper(s,t,m,n-1,dp));
+
+    }
+
+    public static void longest_common_subseq()
+    {
+        String s1 = "abcde";
+        String s2 = "ace";
+        int m = s1.length();
+        int n = s2.length();
+
+        int[][] dp = new int[m + 1][n + 1];
+        for (int[] row : dp) {
+            Arrays.fill(row, -1);
+        }
+        longest_common_subseq_helper(s1,s2,m,n,dp);
+        System.out.println("Length of longest common subsequence: " + dp[m][n]);
+    }
+
+        public static void spiral_matrix() {
+            int[][] matrix = {
+                    {1, 2, 3, 4},
+                    {5, 6, 7, 8},
+                    {9, 10, 11, 12},
+                    {13, 14, 15, 16}
+            };
+
+            int top = 0, bottom = matrix.length - 1;
+            int left = 0, right = matrix[0].length - 1;
+
+            List<Integer> ans = new ArrayList<>();
+
+            while (top <= bottom && left <= right) {
+
+                // Traverse from left to right
+                for (int i = left; i <= right; i++) {
+                    ans.add(matrix[top][i]);
+                }
+                top++;
+
+                // Traverse from top to bottom
+                for (int i = top; i <= bottom; i++) {
+                    ans.add(matrix[i][right]);
+                }
+                right--;
+
+                // Traverse from right to left
+                if (top <= bottom) {
+                    for (int i = right; i >= left; i--) {
+                        ans.add(matrix[bottom][i]);
+                    }
+                    bottom--;
+                }
+
+                // Traverse from bottom to top
+                if (left <= right) {
+                    for (int i = bottom; i >= top; i--) {
+                        ans.add(matrix[i][left]);
+                    }
+                    left++;
+                }
+            }
+
+            System.out.println("Spiral order of the matrix: " + ans);
+        }
+        public static void next_perm()
+        {
+            int [] v = {1,5,1};    //1,5,4,6
+            int right = v.length - 1;
+            int index = v.length -2;
+            while(index >= 0 && v[index] >= v[index + 1])
+            {
+                index -= 1;
+            }
+            if(index <0)
+            {
+                Arrays.sort(v);
+                System.out.println("Next permutation: " + Arrays.toString(v));
+                return ;
+            }
+            while(right>index && v[right]<=v[index])
+            {
+                right-=1;
+            }
+            int temp = v[index];
+            v[index] = v[right];
+            v[right] = temp;
+            System.out.println("Current permutation: " + Arrays.toString(v));
+            Arrays.sort(v,index+1,v.length);
+            System.out.println("Next permutation: " + Arrays.toString(v));
+
+        }
+        public static void generate_parenthesis_helper(String current,int n,int open,int close,List<String> ans)
+        {
+            if(open+close == 2*n)
+            {
+                ans.add(current);
+                return;
+            }
+            if(open<n)
+            {
+                generate_parenthesis_helper(current + "(" ,n,open+1,close,ans);
+            }
+            if(close < open)
+            {
+                generate_parenthesis_helper(current + ")" ,n,open,close+1,ans);
+            }
+
+        }
+        public static void generate_parenthesis()
+        {
+            int n =3;
+            List<String> ans = new ArrayList<>();
+            int open = 0, close = 0;
+            generate_parenthesis_helper("",n,open,close,ans);
+            System.out.println("Generated Parentheses: " + ans);
+        }
+        public static void letter_combination_helper(String digits, int index, String current, Map<Character, String> digitToLetters, List<String> ans) {
+             if(index == digits.length())
+             {
+
+                 ans.add(current);
+                 return ;
+             }
+
+                    char digit = digits.charAt(index);
+                    String letters = digitToLetters.get(digit);
+            System.out.println("Current digit: " + digit + ", Letters: " + letters);
+
+                    for(int j = 0 ;j<letters.length();j++)
+                    {
+                        System.out.println("Here J is "+ j + " function call with current: " + current + letters.charAt(j));
+                        letter_combination_helper(digits,index+1,current + letters.charAt(j),digitToLetters,ans);
+                    }
+    }
+
+public static List<String> letter_combination()
+{
+    String digits = "23";
+    Map <Character, String> digitToLetters = new HashMap<>();
+    digitToLetters.put('2', "abc");
+    digitToLetters.put('3', "def");
+    digitToLetters.put('4', "ghi");
+    digitToLetters.put('5',"jkl");
+    digitToLetters.put('6', "mno");
+    digitToLetters.put('7', "pqrs");
+    digitToLetters.put('8', "tuv");
+    digitToLetters.put('9', "wxyz");
+    List<String> ans = new ArrayList<>();
+    letter_combination_helper(digits,0,"",digitToLetters,ans);
+    System.out.println(ans);
+    return ans;
+
+
+}
+
     public static void main(String[] args) {
-        search_insert_pos();
+        letter_combination();
 
 
     }
