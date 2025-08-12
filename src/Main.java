@@ -136,6 +136,8 @@ public class Main {
         int[] v = {4, 1, 2, 1, 2};
         int result = 0;
         for (int i = 0; i < v.length; i++) {
+
+
             result ^= v[i];
         }
         System.out.println(result);
@@ -321,17 +323,18 @@ public class Main {
     public static void move_zeros() {
         int[] v = {0, 1, 0, 3, 0, 2, 12};
         //          12,1,0,3,0,2,0
-        int left = 0, right = v.length - 1;
-        for (int i = 0; i < v.length; i++) {
-            if (v[i] != 0) {
-
-                swap(v, left, i);
-                left += 1;
+        int count_of_zeros = 0;
+        for(int i = 0; i < v.length; i++) {
+            if (v[i] == 0) {
+                count_of_zeros += 1;
             }
-        }
+           else {
+                v[i - count_of_zeros] = v[i];
+            }
+
         view_list(v);
 
-    }
+    }}
 
     public static void reverse_array(int[] v) {
         int left = 0, right = v.length - 1;
@@ -418,6 +421,8 @@ public class Main {
             if (i > max_reach) {
                 return false;
             }
+            if(max_reach >= v.length -1)
+                return true;
             max_reach = Math.max(i + v[i], max_reach);
         }
         return true;
@@ -454,7 +459,7 @@ public class Main {
 
     }
 
-    public static int unique_p() {
+    public static int unique_paths_1() {
         int m = 3, n = 7;
         int[][] dp = new int[m][n];
         Arrays.fill(dp[0], 1);
@@ -731,88 +736,79 @@ public class Main {
 //            if()
 //        }
 
-        public static int min_path_sum() {
-            int [][] grid = {
-                    {1, 3, 1},
-                    {1, 5, 1},
-                    {4, 2, 1}
-            };
-            int m = grid.length;
-            int n = grid[0].length;
-            int [] [] dp = new int[m][n];
-            Arrays.fill(dp[0], Integer.MAX_VALUE);
-            for(int i = 1; i < m; i++) {
-                grid[i][0] =grid[i][0] + grid[i-1][0];
-            }
-            for(int i = 1;i<n;i++)
-            {
-                grid[0][i] += grid[0][i-1];
-            }
-            for(int i =1;i<m;i++)
-            {
-                for(int j = 1;j<n;j++)
-                {
-                    grid[i][j] = grid[i][j] + Math.min(grid[i-1][j] , grid[i][j-1]);
-                }
-            }
-            return grid[m-1][n-1];
+    public static int min_path_sum() {
+        int[][] grid = {
+                {1, 3, 1},
+                {1, 5, 1},
+                {4, 2, 1}
+        };
+        int m = grid.length;
+        int n = grid[0].length;
+        int[][] dp = new int[m][n];
+        Arrays.fill(dp[0], Integer.MAX_VALUE);
+        for (int i = 1; i < m; i++) {
+            grid[i][0] = grid[i][0] + grid[i - 1][0];
         }
-    public static int edit_distance_helper(String s,String t,int m,int n,int [][] dp)
-    {
-        if(m == 0)
-        {
+        for (int i = 1; i < n; i++) {
+            grid[0][i] += grid[0][i - 1];
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                grid[i][j] = grid[i][j] + Math.min(grid[i - 1][j], grid[i][j - 1]);
+            }
+        }
+        return grid[m - 1][n - 1];
+    }
+
+    public static int edit_distance_helper(String s, String t, int m, int n, int[][] dp) {
+        if (m == 0) {
             return n;
         }
-        if(n==0)
-        {
+        if (n == 0) {
             return m;
         }
-        if(dp[m-1][n-1] != 0)
-        {
-            return dp[m-1][n-1];
+        if (dp[m - 1][n - 1] != 0) {
+            return dp[m - 1][n - 1];
         }
-        if(s.charAt(m-1) == t.charAt(n-1))
-        {
-            return dp[m-1][n-1] = edit_distance_helper(s,t,m-1,n-1,dp);
+        if (s.charAt(m - 1) == t.charAt(n - 1)) {
+            return dp[m - 1][n - 1] = edit_distance_helper(s, t, m - 1, n - 1, dp);
         }
-        return dp[m-1][n-1] = 1 + Math.min(Math.min(edit_distance_helper(s,t,m-1,n,dp),edit_distance_helper(s,t,m,n-1,dp)),edit_distance_helper(s,t,m-1,n-1,dp));
+        return dp[m - 1][n - 1] = 1 + Math.min(Math.min(edit_distance_helper(s, t, m - 1, n, dp), edit_distance_helper(s, t, m, n - 1, dp)), edit_distance_helper(s, t, m - 1, n - 1, dp));
     }
-    public static int edit_distance()
-    {
+
+    public static int edit_distance() {
         String s = "horse";
         String t = "ros";
         int m = s.length();
         int n = t.length();
-        int [][] dp = new int[m+1][n+1];
-        int a = edit_distance_helper(s,t,m,n,dp);
+        int[][] dp = new int[m + 1][n + 1];
+        int a = edit_distance_helper(s, t, m, n, dp);
         System.out.println("Edit distance between \"" + s + "\" and \"" + t + "\" is: " + a);
         return a;
     }
-    public static void max_prod_sub()
-    {
-        int [] v = {2, 3, -2, 4};
+
+    public static void max_prod_sub() {
+        int[] v = {2, 3, -2, 4};
         int n = v.length;
         int lmax = 1;
         int rmax = 1;
         int ans = Integer.MIN_VALUE;
-        for(int i = 0 ;i<n;i++)
-        {
-           if(lmax == 0)
-           {
-               lmax = 1;
-           }
-           if(rmax == 0)
-           {
-               rmax=1;
-           }
+        for (int i = 0; i < n; i++) {
+            if (lmax == 0) {
+                lmax = 1;
+            }
+            if (rmax == 0) {
+                rmax = 1;
+            }
 
-           lmax = lmax * v[i];
-           rmax = rmax * v[n-i-1];
+            lmax = lmax * v[i];
+            rmax = rmax * v[n - i - 1];
             ans = Math.max(ans, Math.max(lmax, rmax));
         }
         System.out.println("Maximum product subarray is: " + ans);
     }
-    public static class TreeNode{
+
+    public static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
@@ -824,66 +820,56 @@ public class Main {
         }
 
     }
-    public static void inorder(TreeNode root,List<Integer>ans)
-    {
-        if(root == null)
-        {
-            return ;
+
+    public static void inorder(TreeNode root, List<Integer> ans) {
+        if (root == null) {
+            return;
         }
-        inorder(root.left,ans);
+        inorder(root.left, ans);
         ans.add(root.val);
-        inorder(root.right,ans);
+        inorder(root.right, ans);
     }
-    public static boolean symmetric_helper(TreeNode p,TreeNode q)
-    {
-        if(p == null && q == null)
-        {
+
+    public static boolean symmetric_helper(TreeNode p, TreeNode q) {
+        if (p == null && q == null) {
             return true;
         }
-        if(p == null || q == null)
-        {
+        if (p == null || q == null) {
             return false;
         }
-        if(p.val != q.val)
-        {
+        if (p.val != q.val) {
             return false;
         }
-        return symmetric_helper(p.left,q.right) && symmetric_helper(p.right,q.left);
+        return symmetric_helper(p.left, q.right) && symmetric_helper(p.right, q.left);
     }
-    public static boolean symmetric(TreeNode root)
-    {
-        if(root == null)
-        {
+
+    public static boolean symmetric(TreeNode root) {
+        if (root == null) {
             return true;
         }
 
-        return symmetric_helper(root.left,root.right);
+        return symmetric_helper(root.left, root.right);
     }
-    public static List<List<Integer>> level_order(TreeNode root)
-    {
-        if(root == null)
-        {
+
+    public static List<List<Integer>> level_order(TreeNode root) {
+        if (root == null) {
             return new ArrayList<>();
         }
         List<List<Integer>> ans = new ArrayList<>();
         Queue<TreeNode> q = new LinkedList<>();
         q.add(root);
-        while(!q.isEmpty())
-        {
+        while (!q.isEmpty()) {
             int size = q.size();
             TreeNode current = q.peek();
             List<Integer> level = new ArrayList<>();
-            while(size-- > 0)
-            {
+            while (size-- > 0) {
                 current = q.poll();
                 assert current != null;
                 level.add(current.val);
-                if(current.left != null)
-                {
+                if (current.left != null) {
                     q.add(current.left);
                 }
-                if(current.right != null)
-                {
+                if (current.right != null) {
                     q.add(current.right);
                 }
 
@@ -893,110 +879,253 @@ public class Main {
         }
         return ans;
     }
-    public static int height(TreeNode root)
-    {
-        if(root == null)
-        {
+
+    public static int height(TreeNode root) {
+        if (root == null) {
             return 0;
         }
         return 1 + Math.max(height(root.left), height(root.right));
 
     }
-    public static List<Integer> right_side_view(TreeNode root)
-    {
-        if(root == null)
-        {
+
+    public static List<Integer> right_side_view(TreeNode root) {
+        if (root == null) {
             return new ArrayList<>();
         }
         int current_level = -1;
-        Queue<Pair<TreeNode,Integer>> q = new LinkedList<>();
+        Queue<Pair<TreeNode, Integer>> q = new LinkedList<>();
         List<Integer> ans = new ArrayList<>();
-        q.add(new Pair<>(root,0));
-        while(!q.isEmpty())
-        {
+        q.add(new Pair<>(root, 0));
+        while (!q.isEmpty()) {
 
-            Pair<TreeNode,Integer> current = q.poll();
+            Pair<TreeNode, Integer> current = q.poll();
 
-            if(current_level < current.second)
-            {
+            if (current_level < current.second) {
                 ans.add(current.first.val);
                 current_level = current.second;
             }
 
-            if(current.first.right != null)
-            {
-                q.add(new Pair<>(current.first.right,current.second + 1));
+            if (current.first.right != null) {
+                q.add(new Pair<>(current.first.right, current.second + 1));
             }
-            if(current.first.left != null)
-            {
-                q.add(new Pair<>(current.first.left,current.second + 1));
+            if (current.first.left != null) {
+                q.add(new Pair<>(current.first.left, current.second + 1));
             }
         }
         System.out.println(ans);
         return ans;
     }
-    public static int diameter(TreeNode root)
-    {
-        if(root == null)
-        {
+
+    public static int diameter(TreeNode root) {
+        if (root == null) {
             return 0;
         }
         int left_height = height(root.left);
         int right_height = height(root.right);
-        return Math.max(left_height+right_height,Math.max(diameter(root.left),diameter(root.right)));
+        return Math.max(left_height + right_height, Math.max(diameter(root.left), diameter(root.right)));
     }
-public static boolean validate_binary_search_tree_helper(TreeNode root,long left_bound,long right_bound)
-{
-    if(root == null)
+
+    public static boolean validate_binary_search_tree_helper(TreeNode root, long left_bound, long right_bound) {
+        if (root == null)
+            return true;
+        if (root.val <= left_bound || root.val >= right_bound)
+            return false;
+        return validate_binary_search_tree_helper(root.left, left_bound, root.val) && validate_binary_search_tree_helper(root.right, root.val, right_bound);
+    }
+
+    public static boolean validate_binary_search_tree(TreeNode root) {
+        if (root == null)
+            return true;
+        if (root.left == null && root.right == null)
+            return true;
+        return validate_binary_search_tree_helper(root.left, Long.MIN_VALUE, Long.MAX_VALUE);
+
+    }
+
+    public static TreeNode invert_tree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+
+        TreeNode newnode = new TreeNode(root.val);
+        TreeNode nnode = newnode;
+        newnode.left = invert_tree(root.right);
+        newnode.right = invert_tree(root.left);
+        return nnode;
+    }
+    public boolean isSubHelper(TreeNode root,TreeNode subroot)
+    {
+    if(root == null && subroot == null)
         return true;
-    if(root.val <= left_bound || root.val >= right_bound)
+    if(root == null || subroot == null)
         return false;
-    return validate_binary_search_tree_helper(root.left,left_bound,root.val) && validate_binary_search_tree_helper(root.right,root.val,right_bound);
-}
-public static boolean validate_binary_search_tree(TreeNode root)
+    if(root.val != subroot.val)
+        return false;
+    return isSubHelper(root.left,subroot.left) && isSubHelper(root.right,subroot.right);
+    }
+public boolean isSub(TreeNode root,TreeNode subroot)
 {
-    if(root == null)
+    if(root == null && subroot == null)
         return true;
-    if(root.left == null && root.right == null)
-        return true;
-    return validate_binary_search_tree_helper(root.left,Long.MIN_VALUE, Long.MAX_VALUE) ;
+    if(root == null || subroot == null)
+        return false;
+    if(root.val == subroot.val)
+    {
+        return isSubHelper(root.left,subroot.left) && isSubHelper(root.right,subroot.right);
+    }
+    return isSub(root.left,subroot) || isSub(root.right,subroot);
+}
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    if(root == null || root == p || root == q) {
+        return root;
+    }
+    TreeNode left = lowestCommonAncestor(root.left, p, q);
+    TreeNode right = lowestCommonAncestor(root.right,p,q);
+    if(left == null)
+    {
+        return right;
+    }
+    else if(right == null)
+    {
+        return right;
+    }
+    return root;
 
 }
-public static TreeNode invert_tree(TreeNode root)
+TreeNode res = null;
+private int count;
+public void kth_smallest_in_bst_helper(TreeNode root,int k)
 {
     if(root == null)
     {
-        return null;
+        return ;
+    }
+    kth_smallest_in_bst_helper(root.left,k);
+    count+=1;
+    if(count == k)
+    {
+        res = root;
+        return;
+    }
+    kth_smallest_in_bst_helper(root.right,k);
+}
+    int count_of_path_sum=0;
+public void path_sum_three(TreeNode root,int targetSum)
+{
+    if(root == null)
+    {
+        return ;
+    }
+    if(targetSum == 0)
+    {
+        System.out.println("Found a path with sum equal to target: " + root.val);
+        count_of_path_sum += 1;
+        return;
+    }
+    if(root.val > targetSum)
+    {
+        return;
     }
 
-    TreeNode newnode = new TreeNode(root.val);
-    TreeNode nnode = newnode;
-    newnode.left = invert_tree(root.right);
-    newnode.right = invert_tree(root.left);
-    return nnode;
+    else{
+        path_sum_three(root.left,targetSum - root.val);
+        path_sum_three(root.right,targetSum - root.val);
+    }
 }
-    public static void TreeNode_helper()
+public void path_sum_3_main(TreeNode root, int targetSum) {
+        if(root == null) {
+            return;
+        }
+        path_sum_three(root,targetSum);
+        path_sum_3_main(root.left,targetSum);
+        path_sum_3_main(root.right,targetSum);
+}
+    public void binaryTreePathsHelper(TreeNode root,String path,List<String> ans)
     {
+        if(root == null)
+        {
+            return;
+        }
+        path = path + "->" + root.val;
+        if(root.left == null && root.right == null)
+        {
+            ans.add(path);
+            return;
+        }
+        binaryTreePathsHelper(root.left,path,ans);
+        binaryTreePathsHelper(root.right , path,ans);
+
+    }
+public List<String> binaryTreePaths(TreeNode root) {
+       if(root == null)
+       {
+           return new ArrayList<>();
+       }
+    List<String >ans = new ArrayList<>();
+    binaryTreePathsHelper(root,"",ans);
+    for(String s : ans)
+    {
+        s = s.substring(0, 2) + s.substring(2).replace("->", " ");
+    }
+    return ans;
+    }
+    public boolean hasPathSum(TreeNode root, int target) {
+        if (root == null) {
+            return false;
+        }
+        if (root.left == null && root.right == null) {
+            return target == root.val;
+        }
+        return hasPathSum(root.left, target - root.val) ||
+                hasPathSum(root.right, target - root.val);
+    }
+    public void hasPathSum2helper(TreeNode root , int target, List<Integer> path,List<List<Integer>> ans)
+    {
+        if(root == null) {
+            return;
+        }
+        path.add(root.val);
+        if(root.left == null && root.right == null && target == root.val)
+        {
+            ans.add(new ArrayList<>(path));
+        }
+
+        else{
+            hasPathSum2helper(root.left,target - root.val,path,ans);
+            hasPathSum2helper(root.right,target - root.val,path,ans);
+        }
+        path.remove(path.size()-1);
+    }
+
+    public boolean hasPathSum2(TreeNode root, int target) {
+        if (root == null) {
+            return false;
+        }
+        List<List<Integer>> ans = new ArrayList<>();
+        hasPathSum2helper(root,target,new ArrayList<>(),ans);
+        for(List<Integer> l : ans)
+        {
+            System.out.println(l);
+        }
+        return true;
+
+    }
+    public static void TreeNode_helper() {
         TreeNode root = new TreeNode(3);
         root.left = new TreeNode(9);
         root.right = new TreeNode(20);
         root.right.left = new TreeNode(15);
         root.right.right = new TreeNode(7);
-        System.out.println(invert_tree(root));
     }
-    public static int [][] merge_intervals()
-    {
-        int [][] intervals = {{1,4},{2,6},{8,10},{15,18}};
+    public static int[][] merge_intervals() {
+        int[][] intervals = {{1, 4}, {2, 6}, {8, 10}, {15, 18}};
         Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
         List<int[]> merged = new ArrayList<>();
-        int [] prev = intervals[0];
-        for(int i =1 ; i<intervals.length;i++)
-        {
-            if(intervals[i][0] < prev[1])
-            {
-                prev[1] = Math.max(prev[1],intervals[i][1]);
-            }
-            else{
+        int[] prev = intervals[0];
+        for (int i = 1; i < intervals.length; i++) {
+            if (intervals[i][0] < prev[1]) {
+                prev[1] = Math.max(prev[1], intervals[i][1]);
+            } else {
                 merged.add(prev);
                 prev = intervals[i];
             }
@@ -1005,17 +1134,16 @@ public static TreeNode invert_tree(TreeNode root)
         merged.add(prev);
         return merged.toArray(new int[merged.size()][]);
     }
-    public static void koko_eating_banana()
-    {
-        int [] piles = {3,6,7,11};
+
+    public static void koko_eating_banana() {
+        int[] piles = {3, 6, 7, 11};
         int h = 8;
         int total_bananas = (Arrays.stream(piles).sum());
         int left = 1, right = total_bananas;
-        while(left < right) {
+        while (left < right) {
             int mid = left + (right - left) / 2;
             int hours_needed = 0;
-            for(int i = 0 ;i<piles.length;i++)
-            {
+            for (int i = 0; i < piles.length; i++) {
                 System.out.println();
                 hours_needed = (int) (hours_needed + Math.ceil((piles[i] * 1.0) / mid)); // Using Math.ceil to round up the division
 //                hours_needed += (piles[i] + mid - 1) / mid; // Equivalent to Math.ceil(piles[i] / mid)
@@ -1028,103 +1156,90 @@ public static TreeNode invert_tree(TreeNode root)
         }
         System.out.println("Minimum eating speed: " + left);
     }
-    public static void first_and_last_pos()
-    {
-        int target = 8 ;
 
-        int [] v = {8,8,8,8,8,8,8,8,8,8,9};
+    public static void first_and_last_pos() {
+        int target = 8;
+
+        int[] v = {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9};
         int left = 0, right = v.length;
-        int [] ans = {-1,-1};
-        while(left < right)
-        {
-            int mid = left+(right-left)/2;
-            if(v[mid] == target)
-            {
+        int[] ans = {-1, -1};
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (v[mid] == target) {
                 int x = mid;
-                while(mid>0 && v[mid-1] == target)
-                {
+                while (mid > 0 && v[mid - 1] == target) {
                     mid -= 1;
                 }
-                while(x<v.length && v[x] == target)
-                {
+                while (x < v.length && v[x] == target) {
                     x += 1;
                 }
                 ans[0] = mid;
-                ans[1] = x-1 ;
+                ans[1] = x - 1;
                 break;
-            }
-            else if (v[mid] <= target)
-            {
+            } else if (v[mid] <= target) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid - 1;
             }
         }
         System.out.println("First and last position of target " + target + " are: " + Arrays.toString(ans));
     }
-    public static void jump_game2()
-    {
-        int [] v = {2,3,1,1,4};
-        int max_reach = 0 ;
-        int cur_reach = 0 ;
+
+    public static void jump_game2() {
+        int[] v = {2, 3, 1, 1, 4};
+        int max_reach = 0;
+        int cur_reach = 0;
         int n = v.length;
         int jump = 0;
-        for(int i =0 ;i<v.length;i++)
-        {
-            if(cur_reach < i)
-            {
-                jump+=1;
+        for (int i = 0; i < v.length; i++) {
+            if (cur_reach < i) {
+                jump += 1;
                 cur_reach = max_reach;
             }
-            max_reach = Math.max(max_reach,i+v[i]);
+            max_reach = Math.max(max_reach, i + v[i]);
         }
         System.out.println("Minimum number of jumps to reach the end: " + jump);
     }
+
     public static int coin_change_helper(int[] coins, int target, int n) {
-       if(target == 0)
-        {
+        if (target == 0) {
             return 0;
         }
-         if(n == 0 || target < 0)
-          {
-                return Integer.MAX_VALUE;
-          }
+        if (n == 0 || target < 0) {
+            return Integer.MAX_VALUE;
+        }
         int include = coin_change_helper(coins, target - coins[n - 1], n);
         int exclude = coin_change_helper(coins, target, n - 1);
-        if(include != Integer.MAX_VALUE)
-        {
+        if (include != Integer.MAX_VALUE) {
             include += 1;
         }
         return Math.min(include, exclude);
 
 
     }
+
     public static int coin_change() {
         int[] coins = {1, 2, 5};
         int target = 11;
-        int [] dp = new int [target+1];
+        int[] dp = new int[target + 1];
 
         Arrays.fill(dp, Integer.MAX_VALUE);
         dp[0] = 0;
-        for(int i = 1;i <target+1;i++)
-        {
-            for(int j =0 ;j<coins.length;j++)
-            {
-                if(i-coins[j]>=0 && dp[i - coins[j]] != Integer.MAX_VALUE)
-                {
-                    dp[i]= Math.min(1 + dp[i-coins[j]],dp[i]);
+        for (int i = 1; i < target + 1; i++) {
+            for (int j = 0; j < coins.length; j++) {
+                if (i - coins[j] >= 0 && dp[i - coins[j]] != Integer.MAX_VALUE) {
+                    dp[i] = Math.min(1 + dp[i - coins[j]], dp[i]);
                 }
             }
 
         }
-        return dp[target+1];
+        return dp[target + 1];
 //        System.out.println("Coin change dp: " + Arrays.toString(dp));
 
 //        int coin = coin_change_helper(coins,target,coins.length);
 //        System.out.println("Minimum number of coins needed to make " + target + " is: " + coin);
     }
+
     public static void perfect_square() {
         int n = 13;
         int[] dp = new int[n + 1];
@@ -1140,59 +1255,46 @@ public static TreeNode invert_tree(TreeNode root)
         System.out.println("DP Table: " + Arrays.toString(dp));
         System.out.println("Minimum number of perfect squares that sum to " + n + " is: " + dp[n]);
     }
-    public static int search_insert_pos()
-    {
-        int [] v = {1,3,5,6};
+
+    public static int search_insert_pos() {
+        int[] v = {1, 3, 5, 6};
         int target = 2;
         int left = 0, right = v.length - 1;
-        while(left <= right)
-        {
-            if(left== right)
-            {
-               if(target>v[left])
-               {
-                   return left+1;
-               }
-               else{
-                   return left;
-               }
+        while (left <= right) {
+            if (left == right) {
+                if (target > v[left]) {
+                    return left + 1;
+                } else {
+                    return left;
+                }
             }
             int mid = left + (right - left) / 2;
-            if(v[mid] == target)
-            {
+            if (v[mid] == target) {
                 return mid;
-            }
-            else if(v[mid] < target)
-            {
+            } else if (v[mid] < target) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid - 1;
             }
         }
         return left;
     }
-    public static int longest_common_subseq_helper(String s,String t,int m,int n,int [][]dp)
-    {
-        if(m<=0 || n<=0)
-        {
+
+    public static int longest_common_subseq_helper(String s, String t, int m, int n, int[][] dp) {
+        if (m <= 0 || n <= 0) {
             return 0;
         }
-        if(dp[m][n] != -1)
-        {
+        if (dp[m][n] != -1) {
             return dp[m][n];
         }
-        if(s.charAt(m-1) == t.charAt(n-1))
-        {
-            return dp[m][n] = 1 + longest_common_subseq_helper(s,t,m-1,n-1,dp);
+        if (s.charAt(m - 1) == t.charAt(n - 1)) {
+            return dp[m][n] = 1 + longest_common_subseq_helper(s, t, m - 1, n - 1, dp);
         }
-        return dp[m][n] = Math.max(longest_common_subseq_helper(s,t,m-1,n,dp),longest_common_subseq_helper(s,t,m,n-1,dp));
+        return dp[m][n] = Math.max(longest_common_subseq_helper(s, t, m - 1, n, dp), longest_common_subseq_helper(s, t, m, n - 1, dp));
 
     }
 
-    public static void longest_common_subseq()
-    {
+    public static void longest_common_subseq() {
         String s1 = "abcde";
         String s2 = "ace";
         int m = s1.length();
@@ -1202,151 +1304,458 @@ public static TreeNode invert_tree(TreeNode root)
         for (int[] row : dp) {
             Arrays.fill(row, -1);
         }
-        longest_common_subseq_helper(s1,s2,m,n,dp);
+        longest_common_subseq_helper(s1, s2, m, n, dp);
         System.out.println("Length of longest common subsequence: " + dp[m][n]);
     }
 
-        public static void spiral_matrix() {
-            int[][] matrix = {
-                    {1, 2, 3, 4},
-                    {5, 6, 7, 8},
-                    {9, 10, 11, 12},
-                    {13, 14, 15, 16}
-            };
+    public static void spiral_matrix() {
+        int[][] matrix = {
+                {1, 2, 3, 4},
+                {5, 6, 7, 8},
+                {9, 10, 11, 12},
+                {13, 14, 15, 16}
+        };
 
-            int top = 0, bottom = matrix.length - 1;
-            int left = 0, right = matrix[0].length - 1;
+        int top = 0, bottom = matrix.length - 1;
+        int left = 0, right = matrix[0].length - 1;
 
-            List<Integer> ans = new ArrayList<>();
+        List<Integer> ans = new ArrayList<>();
 
-            while (top <= bottom && left <= right) {
+        while (top <= bottom && left <= right) {
 
-                // Traverse from left to right
-                for (int i = left; i <= right; i++) {
-                    ans.add(matrix[top][i]);
+            // Traverse from left to right
+            for (int i = left; i <= right; i++) {
+                ans.add(matrix[top][i]);
+            }
+            top++;
+
+            // Traverse from top to bottom
+            for (int i = top; i <= bottom; i++) {
+                ans.add(matrix[i][right]);
+            }
+            right--;
+
+            // Traverse from right to left
+            if (top <= bottom) {
+                for (int i = right; i >= left; i--) {
+                    ans.add(matrix[bottom][i]);
                 }
-                top++;
+                bottom--;
+            }
 
-                // Traverse from top to bottom
-                for (int i = top; i <= bottom; i++) {
-                    ans.add(matrix[i][right]);
+            // Traverse from bottom to top
+            if (left <= right) {
+                for (int i = bottom; i >= top; i--) {
+                    ans.add(matrix[i][left]);
                 }
-                right--;
-
-                // Traverse from right to left
-                if (top <= bottom) {
-                    for (int i = right; i >= left; i--) {
-                        ans.add(matrix[bottom][i]);
-                    }
-                    bottom--;
-                }
-
-                // Traverse from bottom to top
-                if (left <= right) {
-                    for (int i = bottom; i >= top; i--) {
-                        ans.add(matrix[i][left]);
-                    }
-                    left++;
-                }
+                left++;
             }
-
-            System.out.println("Spiral order of the matrix: " + ans);
         }
-        public static void next_perm()
-        {
-            int [] v = {1,5,1};    //1,5,4,6
-            int right = v.length - 1;
-            int index = v.length -2;
-            while(index >= 0 && v[index] >= v[index + 1])
-            {
-                index -= 1;
-            }
-            if(index <0)
-            {
-                Arrays.sort(v);
-                System.out.println("Next permutation: " + Arrays.toString(v));
-                return ;
-            }
-            while(right>index && v[right]<=v[index])
-            {
-                right-=1;
-            }
-            int temp = v[index];
-            v[index] = v[right];
-            v[right] = temp;
-            System.out.println("Current permutation: " + Arrays.toString(v));
-            Arrays.sort(v,index+1,v.length);
-            System.out.println("Next permutation: " + Arrays.toString(v));
 
-        }
-        public static void generate_parenthesis_helper(String current,int n,int open,int close,List<String> ans)
-        {
-            if(open+close == 2*n)
-            {
-                ans.add(current);
-                return;
-            }
-            if(open<n)
-            {
-                generate_parenthesis_helper(current + "(" ,n,open+1,close,ans);
-            }
-            if(close < open)
-            {
-                generate_parenthesis_helper(current + ")" ,n,open,close+1,ans);
-            }
-
-        }
-        public static void generate_parenthesis()
-        {
-            int n =3;
-            List<String> ans = new ArrayList<>();
-            int open = 0, close = 0;
-            generate_parenthesis_helper("",n,open,close,ans);
-            System.out.println("Generated Parentheses: " + ans);
-        }
-        public static void letter_combination_helper(String digits, int index, String current, Map<Character, String> digitToLetters, List<String> ans) {
-             if(index == digits.length())
-             {
-
-                 ans.add(current);
-                 return ;
-             }
-
-                    char digit = digits.charAt(index);
-                    String letters = digitToLetters.get(digit);
-            System.out.println("Current digit: " + digit + ", Letters: " + letters);
-
-                    for(int j = 0 ;j<letters.length();j++)
-                    {
-                        System.out.println("Here J is "+ j + " function call with current: " + current + letters.charAt(j));
-                        letter_combination_helper(digits,index+1,current + letters.charAt(j),digitToLetters,ans);
-                    }
+        System.out.println("Spiral order of the matrix: " + ans);
     }
 
-public static List<String> letter_combination()
+    public static void next_perm() {
+        int[] v = {1, 5, 1};    //1,5,4,6
+        int right = v.length - 1;
+        int index = v.length - 2;
+        while (index >= 0 && v[index] >= v[index + 1]) {
+            index -= 1;
+        }
+        if (index < 0) {
+            Arrays.sort(v);
+            System.out.println("Next permutation: " + Arrays.toString(v));
+            return;
+        }
+        while (right > index && v[right] <= v[index]) {
+            right -= 1;
+        }
+        int temp = v[index];
+        v[index] = v[right];
+        v[right] = temp;
+        System.out.println("Current permutation: " + Arrays.toString(v));
+        Arrays.sort(v, index + 1, v.length);
+        System.out.println("Next permutation: " + Arrays.toString(v));
+
+    }
+
+    public static void generate_parenthesis_helper(String current, int n, int open, int close, List<String> ans) {
+        if (open + close == 2 * n) {
+            ans.add(current);
+            return;
+        }
+        if (open < n) {
+            generate_parenthesis_helper(current + "(", n, open + 1, close, ans);
+        }
+        if (close < open) {
+            generate_parenthesis_helper(current + ")", n, open, close + 1, ans);
+        }
+
+    }
+
+    public static void generate_parenthesis() {
+        int n = 3;
+        List<String> ans = new ArrayList<>();
+        int open = 0, close = 0;
+        generate_parenthesis_helper("", n, open, close, ans);
+        System.out.println("Generated Parentheses: " + ans);
+    }
+
+    public static void letter_combination_helper(String digits, int index, String current, Map<Character, String> digitToLetters, List<String> ans) {
+        if (index == digits.length()) {
+
+            ans.add(current);
+            return;
+        }
+
+        char digit = digits.charAt(index);
+        String letters = digitToLetters.get(digit);
+        System.out.println("Current digit: " + digit + ", Letters: " + letters);
+
+        for (int j = 0; j < letters.length(); j++) {
+            System.out.println("Here J is " + j + " function call with current: " + current + letters.charAt(j));
+            letter_combination_helper(digits, index + 1, current + letters.charAt(j), digitToLetters, ans);
+        }
+    }
+
+    public static List<String> letter_combination() {
+        String digits = "23";
+        Map<Character, String> digitToLetters = new HashMap<>();
+        digitToLetters.put('2', "abc");
+        digitToLetters.put('3', "def");
+        digitToLetters.put('4', "ghi");
+        digitToLetters.put('5', "jkl");
+        digitToLetters.put('6', "mno");
+        digitToLetters.put('7', "pqrs");
+        digitToLetters.put('8', "tuv");
+        digitToLetters.put('9', "wxyz");
+        List<String> ans = new ArrayList<>();
+        letter_combination_helper(digits, 0, "", digitToLetters, ans);
+        System.out.println(ans);
+        return ans;
+    }
+
+    public static class Graphs {
+        int V, E;
+        int[][] adjMatrix;
+
+        Graphs(int V, int E) {
+            this.V = V;
+            this.E = E;
+            adjMatrix = new int[V][V];
+        }
+
+        void addEdge(int u, int v, int weight) {
+            adjMatrix[u][v] = weight;
+            adjMatrix[v][u] = weight; // For undirected graph
+        }
+
+        void traverseGraphs() {
+            for (int i = 0; i < V; i++) {
+                for (int j = 0; j < V; j++) {
+                    if (adjMatrix[i][j] != 0) {
+                        System.out.println("Edge from " + i + " to " + j + " with weight " + adjMatrix[i][j]);
+                    }
+                }
+            }
+        }
+
+        public void dijkstra(int i) {
+
+        }
+    }
+
+    static int knapsack(int[] wt, int[] val, int n, int W) {
+        // Create a 2D DP array to store the maximum value for each subproblem
+        int dp[][] = new int[n][W + 1];
+
+        // Base Condition
+        for (int i = wt[0]; i <= W; i++) {
+            dp[0][i] = val[0];
+        }
+
+        for (int ind = 1; ind < n; ind++) {
+            for (int cap = 0; cap <= W; cap++) {
+                // Calculate the maximum value when the current item is not taken
+                int notTaken = dp[ind - 1][cap];
+
+                // Calculate the maximum value when the current item is taken
+                int taken = Integer.MIN_VALUE;
+                if (wt[ind] <= cap) {
+                    taken = val[ind] + dp[ind - 1][cap - wt[ind]];
+                }
+
+                // Store the maximum value for the current state
+                dp[ind][cap] = Math.max(notTaken, taken);
+            }
+        }
+        System.out.println(Arrays.deepToString(dp));
+        // The result is stored in the last row and last column of the DP array
+        return dp[n - 1][W];
+    }
+
+    public static void graphs() {
+        int V = 5, E = 6;
+        Graphs g = new Graphs(V, E);
+        g.addEdge(0, 1, 10);
+        g.addEdge(0, 4, 20);
+        g.addEdge(1, 2, 10);
+        g.addEdge(1, 3, 30);
+        g.addEdge(2, 3, 20);
+        g.addEdge(3, 4, 10);
+        g.dijkstra(0);
+
+    }
+public static int find_judge()
 {
-    String digits = "23";
-    Map <Character, String> digitToLetters = new HashMap<>();
-    digitToLetters.put('2', "abc");
-    digitToLetters.put('3', "def");
-    digitToLetters.put('4', "ghi");
-    digitToLetters.put('5',"jkl");
-    digitToLetters.put('6', "mno");
-    digitToLetters.put('7', "pqrs");
-    digitToLetters.put('8', "tuv");
-    digitToLetters.put('9', "wxyz");
-    List<String> ans = new ArrayList<>();
-    letter_combination_helper(digits,0,"",digitToLetters,ans);
-    System.out.println(ans);
-    return ans;
+    int[][] trust = {{1, 2}};
+    int n = 2; // Number of people
+    int [] indegree = new int[n + 1];
+    int [] outdegree = new int[n + 1];
+    for (int i = 0; i < trust.length; i++) {
+        int u = trust[i][0];
+        int v = trust[i][1];
+        indegree[v] += 1;
+        outdegree[u] += 1;
+    }
+    for (int i = 1; i <= n; i++) {
+        if (indegree[i] == n - 1) {
+            System.out.println("The judge is: " + i);
+            return i;
+        }
+    }
+    return -1;
 
+}
+public static void decode_string()
+{
+    String s = "3[a2[c]]";
+    Deque<Integer> countStack = new ArrayDeque<>();
+    Deque<StringBuilder> stringStack = new ArrayDeque<>();
+    StringBuilder ans = new StringBuilder();
+    int k =0 ;
+    for(char c : s.toCharArray())
+    {
+        if(Character.isDigit(c))
+        {
+            k = k*10 +(c- '0');
+        }
+        else if(c == '[')
+        {
+            countStack.add(k);
+            k =0;
+            stringStack.push(ans);
+            ans = new StringBuilder();
+        }
+        else if (c==']')
+        {
+            StringBuilder temp = stringStack.pop();
+            int times = countStack.pop();
+            for(int i =0 ;i<times;i++)
+            {
+                temp.append(ans);
+            }
+            ans = temp;
+        }
+        else{
+            ans.append(c);
+        }
+    }
+    System.out.println("Decoded string: " + ans.toString());
+}
+public static void word_break() {
+    String s = "catsandog";
+    Set<String> wordDict = new HashSet<>(Arrays.asList("cats","dog","sand","and","cat"));
+    boolean[] dp = new boolean[s.length() + 1];
+    int n = s.length();
+    dp[n] = true;
+    for(int i = n-1;i>=0;i--)
+    {
+        int current_index = i;
+        for(String word : wordDict)
+        {
+            if(i+word.length() <= n && s.startsWith(word, i))
+            {
+                dp[current_index] = true;
+            }
+            if(dp[current_index])
+            {
+                break;
+            }
+        }
+    }
+    System.out.println("The whole DP is "+ Arrays.toString(dp));
+}
+public static ListNode linkedlist_add_2_numbers(ListNode l1, ListNode l2) {
+        ListNode dummy = new ListNode(0);
+        //2,4,1
+        //   9,6
+        int carry = 0;
+        ListNode current = dummy;
+        while(l1 != null || l2 != null)
+        {
+            int sum = carry;
+            if(l1 != null) {
+                sum += l1.val;
+                l1 = l1.next;
+            }
+            if(l2 != null)
+            {
+                sum += l2.val;
+                l2 = l2.next;
+            }
+            current.next = new ListNode(sum % 10);
+            current = current.next;
+            carry = sum / 10;
 
+        }
+        if(carry > 0) {
+            current.next = new ListNode(carry);
+            current = current.next;
+        }
+        return dummy.next;
+}
+public static boolean linkedListcycle(ListNode head)
+{
+    ListNode slow = head;
+    ListNode fast = head;
+    while(head!= null && head.next != null)
+    {
+        slow = slow.next;
+        fast = fast.next.next;
+        if(slow == fast)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+public static ListNode LinkedListCycle2(ListNode head)
+{
+    ListNode slow = head;
+    ListNode fast = head;
+    while(fast!=null && fast.next != null)
+    {
+        if(slow == fast)
+        {
+
+            slow = head;
+            while (slow != fast)
+            {
+                slow = slow.next;
+                fast = fast.next;
+            }
+            return slow;
+        }
+    }
+    return null;
+}
+public static ListNode reverseLinkedList(ListNode head)
+{
+    //1,2,3,4
+    ListNode prev = null;
+    ListNode current = head;
+    while(current != null)
+    {
+        ListNode temp = current.next;
+        current .next = prev;
+        prev = current;
+        current = temp;
+    }
+    return prev;
+
+}
+public static ListNode intersection(ListNode head1,ListNode head2)
+{
+    int count1 = 0;
+    int count2 = 0;
+    while(head1 != null || head2 != null)
+    {
+        if(head1 != null) {
+            count1++;
+            head1 = head1.next;
+        }
+        if(head2 != null) {
+            count2++;
+            head2 = head2.next;
+        }
+    }
+    System.out.println("Count1: " + count1 + ", Count2: " + count2);
+    int diff = Math.abs(count1 - count2);
+    if(count1 > count2) {
+        while(diff> 0 && head1 != null) {
+            diff -=1;
+            head1 = head1.next;
+
+        }
+        return head1;
+    }
+        while(diff> 0 && head2 != null) {
+            diff -=1;
+            head2 = head2.next;
+
+        }
+        return head2;
+}
+public static ListNode mergeLinkedList(ListNode list1,ListNode list2)
+{
+    //1,2,4   //1,3,4
+    ListNode current = new ListNode(0);
+    ListNode dummy = current;
+    while(list1 != null || list2 != null)
+    {
+        if(list1 == null)
+        {
+            dummy.next = list2;
+            return current.next;
+        }
+        if(list2 == null)
+        {
+            dummy.next = list1;
+            return current.next;
+        }
+        if(list1.val <= list2.val)
+        {
+            dummy.next = list1;
+            list1 = list1.next;
+        } else {
+            dummy.next = list2;
+            list2 = list2.next;
+        }
+        dummy = dummy.next;
+    }
+    return current.next;
+
+}
+public static void removeNthNode(ListNode head)
+{
+    ListNode dummy = new ListNode(0);
+    ListNode current = dummy;
+    dummy.next = head;
+    int count = 0;
+    int n =2;
+    while(current != null)
+    {
+        count += 1;
+        current = current.next;
+    }
+    int places_to_move = count - n;
+}
+
+public static void LinkedList_helper()
+{
+    ListNode node = new ListNode(0);
+    ListNode current = node;
+    for (int i = 1; i <= 10; i++) {
+        current.next = new ListNode(i);
+        current = current.next;
+    }
+    linkedlist_add_2_numbers(node,node);
 }
 
     public static void main(String[] args) {
-        letter_combination();
-
-
+        TreeNode_helper();
     }
 }
+
 
